@@ -1,0 +1,441 @@
+<head>
+  <meta charset="utf-8" />
+  <script type="text/javascript" src="jquery-3.3.1.js"></script>
+</head>
+
+<div class="upload"><input type="file" name="file" id="file" /></div>
+
+<div id="firstHiddenArea" style="display: none;">
+  <div id="errDiv"><label id="lblErr" style="color: red;">&nbsp;</label></div>
+  <label for="pet-select">マイクラブロック減色方法選択:</label>
+
+  <select
+    name="decodeMethod"
+    id="decodeMethodID"
+    onchange="selectDecodeMethod(this);"
+  >
+    <option value="1">RGBユーグリッド距離での減色法</option>
+    <option value="2">XYZユーグリッド距離での減色法</option>
+    <option value="3">LMSユーグリッド距離での減色法</option>
+  </select>
+
+  <br />
+  <label id="lblSrc">&nbsp;</label><br />
+  <canvas id="canvas"></canvas>
+  <br />
+  <hr />
+  <label id="lblDst">&nbsp;</label><br />
+  <canvas id="dst_canvas"></canvas>
+
+  <div>
+    <label>X座標</label> <input type="text" id="txtX" value="0" />
+    <br />
+    <label>Y座標</label> <input type="text" id="txtY" value="0" />
+    <br />
+    <label>Z座標</label> <input type="text" id="txtZ" value="0" />
+    <br />
+    <input type="button" onclick="makeCommand();" value="コマンド生成" />
+    <br />
+    <textarea id="textarea1" value="">&nbsp;</textarea>
+  </div>
+</div>
+
+<script>
+  var file = document.getElementById("file");
+  var canvas = document.getElementById("canvas");
+  var canvasWidth = 128;
+  var canvasHeight = 128;
+  var uploadImgSrc;
+
+  var dstCanvas = document.getElementById("dst_canvas");
+
+  // Canvasの準備
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  var ctx = canvas.getContext("2d");
+
+  dstCanvas.width = canvasWidth;
+  dstCanvas.height = canvasHeight;
+  var dstCtx = dstCanvas.getContext("2d");
+
+  var tbl = new Array(128);
+  for (let y = 0; y < 128; y++) {
+    tbl[y] = new Array(128).fill(0);
+  }
+
+  function makeCommand() {
+    var baseX = parseInt(document.getElementById("txtX").value);
+    var baseY = parseInt(document.getElementById("txtY").value) - 1;
+    var baseZ = parseInt(document.getElementById("txtZ").value);
+
+    //txtCmd.Text = "";//クリア
+    document.getElementById("textarea1").value = "";
+    var buffCmd = "";
+    for (var y = 0; y < 128; ++y) {
+      for (var x = 0; x < 128; ++x) {
+        buffCmd =
+          buffCmd +
+          'player.execute("' +
+          "/setblock " +
+          (baseX + x) +
+          " " +
+          baseY +
+          " " +
+          (baseZ + y) +
+          " " +
+          minecraftPalette[tbl[x][y]] +
+          '")\n';
+      }
+    }
+    //console.log(buffCmd);
+    document.getElementById("textarea1").value = buffCmd;
+  }
+
+  function loadLocalImage(e) {
+    // ファイル情報を取得
+    var fileData = e.target.files[0];
+
+    // 画像ファイル以外は処理を止める
+    if (!fileData.type.match("image.*")) {
+      alert("画像を選択してください");
+      return;
+    }
+
+    // FileReaderオブジェクトを使ってファイル読み込み
+    var reader = new FileReader();
+    // ファイル読み込みに成功したときの処理
+    reader.onload = function () {
+      // Canvas上に表示する
+      uploadImgSrc = reader.result;
+      canvasDraw();
+    };
+    // ファイル読み込みを実行
+    reader.readAsDataURL(fileData);
+  }
+
+  // ファイルが指定された時にloadLocalImage()を実行
+  file.addEventListener("change", loadLocalImage, false);
+
+  // Canvas上に画像を表示する
+  function canvasDraw() {
+    // canvas内の要素をクリアする
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    dstCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    // Canvas上に画像を表示
+    var img = new Image();
+    img.src = uploadImgSrc;
+    img.onload = function () {
+      document.getElementById("lblSrc").innerText = "";
+      document.getElementById("lblDst").innerText = "";
+
+      if (this.height == 128 && this.width == 128) {
+        document.getElementById("lblSrc").innerText = "元画像";
+        document.getElementById("lblDst").innerText = "マイクラ用減色画像";
+        document.getElementById("lblErr").innerText = "";
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          canvasWidth,
+          this.height * (canvasWidth / this.width)
+        );
+        dstCtx.drawImage(
+          img,
+          0,
+          0,
+          canvasWidth,
+          this.height * (canvasWidth / this.width)
+        );
+
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var width = imageData.width,
+          height = imageData.height;
+        var pixels = imageData.data;
+
+        // ピクセル単位で操作できる
+        for (var y = 0; y < height; ++y) {
+          for (var x = 0; x < width; ++x) {
+            var base = (y * width + x) * 4;
+            var rgb = {
+              r: pixels[base + 0],
+              g: pixels[base + 1],
+              b: pixels[base + 2]
+            };
+            var colorIndex = chooseColor001(palette, rgb);
+            var newColor = convertToRGB(palette[colorIndex]);
+            tbl[x][y] = colorIndex;
+
+            pixels[base + 0] = newColor.r; // Red
+            pixels[base + 1] = newColor.g; // Green
+            pixels[base + 2] = newColor.b; // Blue
+
+            pixels[base + 3] = 255; // Alpha
+          }
+        }
+        // 変更した内容をキャンバスに書き戻す
+        dstCtx.putImageData(imageData, 0, 0);
+
+        //非表示エリアの解放
+        document.getElementById("firstHiddenArea").style.display = "block";
+      } else {
+        document.getElementById("lblErr").innerText =
+          "画像サイズは128x128にしてください。";
+      }
+    };
+  }
+
+  // Canvas上に画像を表示する
+  function canvasDecode(nMethod) {
+    // dstCtx内の要素をクリアする
+    dstCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var width = imageData.width,
+      height = imageData.height;
+    var pixels = imageData.data;
+
+    // ピクセル単位で操作できる
+    for (var y = 0; y < height; ++y) {
+      for (var x = 0; x < width; ++x) {
+        var base = (y * width + x) * 4;
+        var rgb = {
+          r: pixels[base + 0],
+          g: pixels[base + 1],
+          b: pixels[base + 2]
+        };
+        var colorIndex = 0;
+        switch (nMethod) {
+          case 1:
+            colorIndex = chooseColor001(palette, rgb);
+            break;
+          case 2:
+            colorIndex = chooseColor002(palette, rgb);
+            break;
+          case 3:
+            colorIndex = chooseColor003(palette, rgb);
+            break;
+        }
+        var newColor = convertToRGB(palette[colorIndex]);
+        tbl[x][y] = colorIndex;
+
+        pixels[base + 0] = newColor.r; // Red
+        pixels[base + 1] = newColor.g; // Green
+        pixels[base + 2] = newColor.b; // Blue
+
+        pixels[base + 3] = 255; // Alpha
+      }
+    }
+    // 変更した内容をキャンバスに書き戻す
+    dstCtx.putImageData(imageData, 0, 0);
+  }
+
+  function selectDecodeMethod(obj) {
+    var idx = obj.selectedIndex;
+    var value = obj.options[idx].value;
+    console.log("value=" + value);
+
+    canvasDecode(parseInt(value));
+  }
+
+  // カラーパレット
+  //const palette = ["DF0413", "059543", "007DC6"];
+  const palette = [
+    "161516",
+    "414041",
+    "5f5e5f",
+    "838283",
+    "8e8d8e",
+    "d9d8da",
+    "81818f",
+    "419b99",
+    "cd6b8e",
+    "973fb9",
+    "6c3496",
+    "8a88d9",
+    "2b3f97",
+    "3e6cd9",
+    "5075a8",
+    "35586c",
+    "832b2c",
+    "5f0101",
+    "d90000",
+    "b86b2c",
+    "d89f52",
+    "815c43",
+    "644226",
+    "4a3526",
+    "6c9630",
+    "7d9f4b",
+    "01b731",
+    "6cad16",
+    "c2c12c",
+    "d4c941",
+    "c1b480",
+    "655234",
+    "566b2c",
+    "374d15",
+    "026702",
+    "3c4c27",
+    "2e462d",
+    "d9d3cf"
+  ];
+
+  const minecraftPalette = [
+    "coal_block",
+    "concrete 7",
+    "cobblestone",
+    "concrete 8",
+    "iron_bars",
+    "wool 0",
+    "clay",
+    "diamond_block", //173=石炭ブロック, 251:7=Grayコンクリート, 4=丸石, 251:8薄灰色
+    "wool 6",
+    "wool 2",
+    "wool 10",
+    "ice",
+    "wool 11",
+    "lapis_block",
+    "wool 3",
+    "wool 9", // 35:6:ピンク羊毛, 35:2赤紫羊毛, 35:10 紫羊毛, 79:氷, 35:11=青色羊毛,22ラピスラズリ,wool:3=空色羊毛, wool:9=水色羊毛
+    "wool 14",
+    "nether_brick",
+    "redstone_block",
+    "wool 1",
+    "glowstone",
+    "dirt",
+    "wool 12",
+    "wool 12", //35:14赤色羊毛,要塞レンガ,レッドストーン,35:1オレンジ羊毛,グロウストーン,ポドゾル, ****(トウヒのゲート・・・おけない）, 35:12茶色羊毛
+    "slime",
+    "grass",
+    "emerald_block",
+    "wool 5",
+    "wool 4",
+    "gold_block",
+    "end_stone",
+    "planks",
+    "wool 13",
+    "leaves 3",
+    "dried_kelp_block",
+    "leaves 2",
+    "leaves 1",
+    "quartz_block"
+  ]; //緑羊毛,ジャングルの葉,乾燥昆布,白樺の葉, トウヒの葉
+
+  // HEXカラーコードをRGBに変換する
+  function convertToRGB(hex) {
+    return {
+      r: parseInt(hex.substr(0, 2), 16),
+      g: parseInt(hex.substr(2, 2), 16),
+      b: parseInt(hex.substr(4, 2), 16)
+    };
+  }
+
+  function convertRGBToXYZ(c) {
+    return {
+      x: 0.5141 * c.r + 0.3239 * c.g + 0.1604 * c.b,
+      y: 0.2651 * c.r + 0.6702 * c.g + 0.0641 * c.b,
+      z: 0.0241 * c.r + 0.1228 * c.g + 0.8444 * c.b
+    };
+  }
+
+  function convertRGBToLMS(c) {
+    return {
+      L: 0.3811 * c.r + 0.5783 * c.g + 0.0402 * c.b,
+      M: 0.1967 * c.r + 0.7244 * c.g + 0.0782 * c.b,
+      S: 0.0241 * c.r + 0.1228 * c.g + 0.8444 * c.b
+    };
+  }
+
+  // RGBユークリッド距離で色差をもとめる
+  function calcRGBDelta(t, p) {
+    return (
+      Math.pow((p.r - t.r) * 0.3, 2) +
+      Math.pow((p.g - t.g) * 0.59, 2) +
+      Math.pow((p.b - t.b) * 0.11, 2)
+    );
+  }
+
+  // XYZユークリッド距離で色差をもとめる
+  function calcXYZDelta(t, p) {
+    return (
+      Math.pow(p.x - t.x, 2) + Math.pow(p.y - t.y, 2) + Math.pow(p.z - t.z, 2)
+    );
+  }
+
+  // LMSユークリッド距離で色差をもとめる
+  function calcLMSDelta(t, p) {
+    return (
+      Math.pow(p.L - t.L, 2) + Math.pow(p.M - t.M, 2) + Math.pow(p.S - t.S, 2)
+    );
+  }
+
+  // カラーパレットから近い色を取得する(RGBのユーグリッド距離による減色)
+  function chooseColor001(palette, rgb) {
+    // 元の色(RGB)
+    //const rgb = convertToRGB(hex);
+
+    let color;
+    let delta = 6553500;
+    let nIndex = 0;
+
+    // カラーパレットの色と元の色の色差が一番小さい(似ている)色を選ぶ
+    for (var n = 0; n < palette.length; n++) {
+      var prgb = convertToRGB(palette[n]);
+      var d = calcRGBDelta(prgb, rgb);
+      if (d < delta) {
+        color = prgb;
+        delta = d;
+        nIndex = n;
+      }
+    }
+    //console.log("n=" + nIndex);
+    return nIndex;
+  }
+
+  //XYZ
+  function chooseColor002(palette, rgb) {
+    // 元の色(RGB)
+    //const rgb = convertToRGB(hex);
+
+    //let color;
+    let delta = 6553500;
+    let nIndex = 0;
+    let xyz = convertRGBToXYZ(rgb);
+
+    // カラーパレットの色と元の色の色差が一番小さい(似ている)色を選ぶ
+    for (var n = 0; n < palette.length; n++) {
+      var pXYZ = convertRGBToXYZ(convertToRGB(palette[n]));
+      var d = calcXYZDelta(pXYZ, xyz);
+      if (d < delta) {
+        //color = pXYZ;
+        delta = d;
+        nIndex = n;
+      }
+    }
+    return nIndex;
+  }
+
+  //LMS
+  function chooseColor003(palette, rgb) {
+    // 元の色(RGB)
+    //const rgb = convertToRGB(hex);
+
+    //let color;
+    let delta = 6553500;
+    let nIndex = 0;
+    let lms = convertRGBToLMS(rgb);
+
+    // カラーパレットの色と元の色の色差が一番小さい(似ている)色を選ぶ
+    for (var n = 0; n < palette.length; n++) {
+      var pLMS = convertRGBToLMS(convertToRGB(palette[n]));
+      var d = calcLMSDelta(pLMS, lms);
+      if (d < delta) {
+        //color = pXYZ;
+        delta = d;
+        nIndex = n;
+      }
+    }
+    return nIndex;
+  }
+</script>
