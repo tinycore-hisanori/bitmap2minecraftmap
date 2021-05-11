@@ -7,16 +7,16 @@
 
 <div id="firstHiddenArea" style="display: none;">
   <div id="errDiv"><label id="lblErr" style="color: red;">&nbsp;</label></div>
-  <label for="pet-select">ƒ}ƒCƒNƒ‰ƒuƒƒbƒNŒ¸F•û–@‘I‘ğ:</label>
+  <label for="pet-select">ãƒã‚¤ã‚¯ãƒ©ãƒ–ãƒ­ãƒƒã‚¯æ¸›è‰²æ–¹æ³•é¸æŠ:</label>
 
   <select
     name="decodeMethod"
     id="decodeMethodID"
     onchange="selectDecodeMethod(this);"
   >
-    <option value="1">RGBƒ†[ƒOƒŠƒbƒh‹——£‚Å‚ÌŒ¸F–@</option>
-    <option value="2">XYZƒ†[ƒOƒŠƒbƒh‹——£‚Å‚ÌŒ¸F–@</option>
-    <option value="3">LMSƒ†[ƒOƒŠƒbƒh‹——£‚Å‚ÌŒ¸F–@</option>
+    <option value="1">RGBãƒ¦ãƒ¼ã‚°ãƒªãƒƒãƒ‰è·é›¢ã§ã®æ¸›è‰²æ³•</option>
+    <option value="2">XYZãƒ¦ãƒ¼ã‚°ãƒªãƒƒãƒ‰è·é›¢ã§ã®æ¸›è‰²æ³•</option>
+    <option value="3">LMSãƒ¦ãƒ¼ã‚°ãƒªãƒƒãƒ‰è·é›¢ã§ã®æ¸›è‰²æ³•</option>
   </select>
 
   <br />
@@ -28,13 +28,13 @@
   <canvas id="dst_canvas"></canvas>
 
   <div>
-    <label>XÀ•W</label> <input type="text" id="txtX" value="0" />
+    <label>Xåº§æ¨™</label> <input type="text" id="txtX" value="0" />
     <br />
-    <label>YÀ•W</label> <input type="text" id="txtY" value="0" />
+    <label>Yåº§æ¨™</label> <input type="text" id="txtY" value="0" />
     <br />
-    <label>ZÀ•W</label> <input type="text" id="txtZ" value="0" />
+    <label>Zåº§æ¨™</label> <input type="text" id="txtZ" value="0" />
     <br />
-    <input type="button" onclick="makeCommand();" value="ƒRƒ}ƒ“ƒh¶¬" />
+    <input type="button" onclick="makeCommand();" value="ã‚³ãƒãƒ³ãƒ‰ç”Ÿæˆ" />
     <br />
     <textarea id="textarea1" value="">&nbsp;</textarea>
   </div>
@@ -49,7 +49,7 @@
 
   var dstCanvas = document.getElementById("dst_canvas");
 
-  // Canvas‚Ì€”õ
+  // Canvasã®æº–å‚™
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
   var ctx = canvas.getContext("2d");
@@ -68,7 +68,7 @@
     var baseY = parseInt(document.getElementById("txtY").value) - 1;
     var baseZ = parseInt(document.getElementById("txtZ").value);
 
-    //txtCmd.Text = "";//ƒNƒŠƒA
+    //txtCmd.Text = "";//ã‚¯ãƒªã‚¢
     document.getElementById("textarea1").value = "";
     var buffCmd = "";
     for (var y = 0; y < 128; ++y) {
@@ -92,37 +92,37 @@
   }
 
   function loadLocalImage(e) {
-    // ƒtƒ@ƒCƒ‹î•ñ‚ğæ“¾
+    // ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ã‚’å–å¾—
     var fileData = e.target.files[0];
 
-    // ‰æ‘œƒtƒ@ƒCƒ‹ˆÈŠO‚Íˆ—‚ğ~‚ß‚é
+    // ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ä»¥å¤–ã¯å‡¦ç†ã‚’æ­¢ã‚ã‚‹
     if (!fileData.type.match("image.*")) {
-      alert("‰æ‘œ‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢");
+      alert("ç”»åƒã‚’é¸æŠã—ã¦ãã ã•ã„");
       return;
     }
 
-    // FileReaderƒIƒuƒWƒFƒNƒg‚ğg‚Á‚Äƒtƒ@ƒCƒ‹“Ç‚İ‚İ
+    // FileReaderã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½¿ã£ã¦ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿
     var reader = new FileReader();
-    // ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚É¬Œ÷‚µ‚½‚Æ‚«‚Ìˆ—
+    // ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã«æˆåŠŸã—ãŸã¨ãã®å‡¦ç†
     reader.onload = function () {
-      // Canvasã‚É•\¦‚·‚é
+      // Canvasä¸Šã«è¡¨ç¤ºã™ã‚‹
       uploadImgSrc = reader.result;
       canvasDraw();
     };
-    // ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚ğÀs
+    // ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã‚’å®Ÿè¡Œ
     reader.readAsDataURL(fileData);
   }
 
-  // ƒtƒ@ƒCƒ‹‚ªw’è‚³‚ê‚½‚ÉloadLocalImage()‚ğÀs
+  // ãƒ•ã‚¡ã‚¤ãƒ«ãŒæŒ‡å®šã•ã‚ŒãŸæ™‚ã«loadLocalImage()ã‚’å®Ÿè¡Œ
   file.addEventListener("change", loadLocalImage, false);
 
-  // Canvasã‚É‰æ‘œ‚ğ•\¦‚·‚é
+  // Canvasä¸Šã«ç”»åƒã‚’è¡¨ç¤ºã™ã‚‹
   function canvasDraw() {
-    // canvas“à‚Ì—v‘f‚ğƒNƒŠƒA‚·‚é
+    // canvaså†…ã®è¦ç´ ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     dstCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    // Canvasã‚É‰æ‘œ‚ğ•\¦
+    // Canvasä¸Šã«ç”»åƒã‚’è¡¨ç¤º
     var img = new Image();
     img.src = uploadImgSrc;
     img.onload = function () {
@@ -130,8 +130,8 @@
       document.getElementById("lblDst").innerText = "";
 
       if (this.height == 128 && this.width == 128) {
-        document.getElementById("lblSrc").innerText = "Œ³‰æ‘œ";
-        document.getElementById("lblDst").innerText = "ƒ}ƒCƒNƒ‰—pŒ¸F‰æ‘œ";
+        document.getElementById("lblSrc").innerText = "å…ƒç”»åƒ";
+        document.getElementById("lblDst").innerText = "ãƒã‚¤ã‚¯ãƒ©ç”¨æ¸›è‰²ç”»åƒ";
         document.getElementById("lblErr").innerText = "";
 
         ctx.drawImage(
@@ -154,7 +154,7 @@
           height = imageData.height;
         var pixels = imageData.data;
 
-        // ƒsƒNƒZƒ‹’PˆÊ‚Å‘€ì‚Å‚«‚é
+        // ãƒ”ã‚¯ã‚»ãƒ«å˜ä½ã§æ“ä½œã§ãã‚‹
         for (var y = 0; y < height; ++y) {
           for (var x = 0; x < width; ++x) {
             var base = (y * width + x) * 4;
@@ -174,28 +174,28 @@
             pixels[base + 3] = 255; // Alpha
           }
         }
-        // •ÏX‚µ‚½“à—e‚ğƒLƒƒƒ“ƒoƒX‚É‘‚«–ß‚·
+        // å¤‰æ›´ã—ãŸå†…å®¹ã‚’ã‚­ãƒ£ãƒ³ãƒã‚¹ã«æ›¸ãæˆ»ã™
         dstCtx.putImageData(imageData, 0, 0);
 
-        //”ñ•\¦ƒGƒŠƒA‚Ì‰ğ•ú
+        //éè¡¨ç¤ºã‚¨ãƒªã‚¢ã®è§£æ”¾
         document.getElementById("firstHiddenArea").style.display = "block";
       } else {
         document.getElementById("lblErr").innerText =
-          "‰æ‘œƒTƒCƒY‚Í128x128‚É‚µ‚Ä‚­‚¾‚³‚¢B";
+          "ç”»åƒã‚µã‚¤ã‚ºã¯128x128ã«ã—ã¦ãã ã•ã„ã€‚";
       }
     };
   }
 
-  // Canvasã‚É‰æ‘œ‚ğ•\¦‚·‚é
+  // Canvasä¸Šã«ç”»åƒã‚’è¡¨ç¤ºã™ã‚‹
   function canvasDecode(nMethod) {
-    // dstCtx“à‚Ì—v‘f‚ğƒNƒŠƒA‚·‚é
+    // dstCtxå†…ã®è¦ç´ ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
     dstCtx.clearRect(0, 0, canvasWidth, canvasHeight);
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var width = imageData.width,
       height = imageData.height;
     var pixels = imageData.data;
 
-    // ƒsƒNƒZƒ‹’PˆÊ‚Å‘€ì‚Å‚«‚é
+    // ãƒ”ã‚¯ã‚»ãƒ«å˜ä½ã§æ“ä½œã§ãã‚‹
     for (var y = 0; y < height; ++y) {
       for (var x = 0; x < width; ++x) {
         var base = (y * width + x) * 4;
@@ -226,7 +226,7 @@
         pixels[base + 3] = 255; // Alpha
       }
     }
-    // •ÏX‚µ‚½“à—e‚ğƒLƒƒƒ“ƒoƒX‚É‘‚«–ß‚·
+    // å¤‰æ›´ã—ãŸå†…å®¹ã‚’ã‚­ãƒ£ãƒ³ãƒã‚¹ã«æ›¸ãæˆ»ã™
     dstCtx.putImageData(imageData, 0, 0);
   }
 
@@ -238,7 +238,7 @@
     canvasDecode(parseInt(value));
   }
 
-  // ƒJƒ‰[ƒpƒŒƒbƒg
+  // ã‚«ãƒ©ãƒ¼ãƒ‘ãƒ¬ãƒƒãƒˆ
   //const palette = ["DF0413", "059543", "007DC6"];
   const palette = [
     "161516",
@@ -289,7 +289,7 @@
     "iron_bars",
     "wool 0",
     "clay",
-    "diamond_block", //173=Î’YƒuƒƒbƒN, 251:7=GrayƒRƒ“ƒNƒŠ[ƒg, 4=ŠÛÎ, 251:8”–ŠDF
+    "diamond_block", //173=çŸ³ç‚­ãƒ–ãƒ­ãƒƒã‚¯, 251:7=Grayã‚³ãƒ³ã‚¯ãƒªãƒ¼ãƒˆ, 4=ä¸¸çŸ³, 251:8è–„ç°è‰²
     "wool 6",
     "wool 2",
     "wool 10",
@@ -297,7 +297,7 @@
     "wool 11",
     "lapis_block",
     "wool 3",
-    "wool 9", // 35:6:ƒsƒ“ƒN—r–Ñ, 35:2Ô‡—r–Ñ, 35:10 ‡—r–Ñ, 79:•X, 35:11=ÂF—r–Ñ,22ƒ‰ƒsƒXƒ‰ƒYƒŠ,wool:3=‹óF—r–Ñ, wool:9=…F—r–Ñ
+    "wool 9", // 35:6:ãƒ”ãƒ³ã‚¯ç¾Šæ¯›, 35:2èµ¤ç´«ç¾Šæ¯›, 35:10 ç´«ç¾Šæ¯›, 79:æ°·, 35:11=é’è‰²ç¾Šæ¯›,22ãƒ©ãƒ”ã‚¹ãƒ©ã‚ºãƒª,wool:3=ç©ºè‰²ç¾Šæ¯›, wool:9=æ°´è‰²ç¾Šæ¯›
     "wool 14",
     "nether_brick",
     "redstone_block",
@@ -305,7 +305,7 @@
     "glowstone",
     "dirt",
     "wool 12",
-    "wool 12", //35:14ÔF—r–Ñ,—vÇƒŒƒ“ƒK,ƒŒƒbƒhƒXƒg[ƒ“,35:1ƒIƒŒƒ“ƒW—r–Ñ,ƒOƒƒEƒXƒg[ƒ“,ƒ|ƒhƒ]ƒ‹, ****(ƒgƒEƒq‚ÌƒQ[ƒgEEE‚¨‚¯‚È‚¢j, 35:12’ƒF—r–Ñ
+    "wool 12", //35:14èµ¤è‰²ç¾Šæ¯›,è¦å¡ãƒ¬ãƒ³ã‚¬,ãƒ¬ãƒƒãƒ‰ã‚¹ãƒˆãƒ¼ãƒ³,35:1ã‚ªãƒ¬ãƒ³ã‚¸ç¾Šæ¯›,ã‚°ãƒ­ã‚¦ã‚¹ãƒˆãƒ¼ãƒ³,ãƒãƒ‰ã‚¾ãƒ«, ****(ãƒˆã‚¦ãƒ’ã®ã‚²ãƒ¼ãƒˆãƒ»ãƒ»ãƒ»ãŠã‘ãªã„ï¼‰, 35:12èŒ¶è‰²ç¾Šæ¯›
     "slime",
     "grass",
     "emerald_block",
@@ -320,9 +320,9 @@
     "leaves 2",
     "leaves 1",
     "quartz_block"
-  ]; //—Î—r–Ñ,ƒWƒƒƒ“ƒOƒ‹‚Ì—t,Š£‘‡©•z,”’Š’‚Ì—t, ƒgƒEƒq‚Ì—t
+  ]; //ç·‘ç¾Šæ¯›,ã‚¸ãƒ£ãƒ³ã‚°ãƒ«ã®è‘‰,ä¹¾ç‡¥æ˜†å¸ƒ,ç™½æ¨ºã®è‘‰, ãƒˆã‚¦ãƒ’ã®è‘‰
 
-  // HEXƒJƒ‰[ƒR[ƒh‚ğRGB‚É•ÏŠ·‚·‚é
+  // HEXã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’RGBã«å¤‰æ›ã™ã‚‹
   function convertToRGB(hex) {
     return {
       r: parseInt(hex.substr(0, 2), 16),
@@ -347,7 +347,7 @@
     };
   }
 
-  // RGBƒ†[ƒNƒŠƒbƒh‹——£‚ÅF·‚ğ‚à‚Æ‚ß‚é
+  // RGBãƒ¦ãƒ¼ã‚¯ãƒªãƒƒãƒ‰è·é›¢ã§è‰²å·®ã‚’ã‚‚ã¨ã‚ã‚‹
   function calcRGBDelta(t, p) {
     return (
       Math.pow((p.r - t.r) * 0.3, 2) +
@@ -356,30 +356,30 @@
     );
   }
 
-  // XYZƒ†[ƒNƒŠƒbƒh‹——£‚ÅF·‚ğ‚à‚Æ‚ß‚é
+  // XYZãƒ¦ãƒ¼ã‚¯ãƒªãƒƒãƒ‰è·é›¢ã§è‰²å·®ã‚’ã‚‚ã¨ã‚ã‚‹
   function calcXYZDelta(t, p) {
     return (
       Math.pow(p.x - t.x, 2) + Math.pow(p.y - t.y, 2) + Math.pow(p.z - t.z, 2)
     );
   }
 
-  // LMSƒ†[ƒNƒŠƒbƒh‹——£‚ÅF·‚ğ‚à‚Æ‚ß‚é
+  // LMSãƒ¦ãƒ¼ã‚¯ãƒªãƒƒãƒ‰è·é›¢ã§è‰²å·®ã‚’ã‚‚ã¨ã‚ã‚‹
   function calcLMSDelta(t, p) {
     return (
       Math.pow(p.L - t.L, 2) + Math.pow(p.M - t.M, 2) + Math.pow(p.S - t.S, 2)
     );
   }
 
-  // ƒJƒ‰[ƒpƒŒƒbƒg‚©‚ç‹ß‚¢F‚ğæ“¾‚·‚é(RGB‚Ìƒ†[ƒOƒŠƒbƒh‹——£‚É‚æ‚éŒ¸F)
+  // ã‚«ãƒ©ãƒ¼ãƒ‘ãƒ¬ãƒƒãƒˆã‹ã‚‰è¿‘ã„è‰²ã‚’å–å¾—ã™ã‚‹(RGBã®ãƒ¦ãƒ¼ã‚°ãƒªãƒƒãƒ‰è·é›¢ã«ã‚ˆã‚‹æ¸›è‰²)
   function chooseColor001(palette, rgb) {
-    // Œ³‚ÌF(RGB)
+    // å…ƒã®è‰²(RGB)
     //const rgb = convertToRGB(hex);
 
     let color;
     let delta = 6553500;
     let nIndex = 0;
 
-    // ƒJƒ‰[ƒpƒŒƒbƒg‚ÌF‚ÆŒ³‚ÌF‚ÌF·‚ªˆê”Ô¬‚³‚¢(—‚Ä‚¢‚é)F‚ğ‘I‚Ô
+    // ã‚«ãƒ©ãƒ¼ãƒ‘ãƒ¬ãƒƒãƒˆã®è‰²ã¨å…ƒã®è‰²ã®è‰²å·®ãŒä¸€ç•ªå°ã•ã„(ä¼¼ã¦ã„ã‚‹)è‰²ã‚’é¸ã¶
     for (var n = 0; n < palette.length; n++) {
       var prgb = convertToRGB(palette[n]);
       var d = calcRGBDelta(prgb, rgb);
@@ -395,7 +395,7 @@
 
   //XYZ
   function chooseColor002(palette, rgb) {
-    // Œ³‚ÌF(RGB)
+    // å…ƒã®è‰²(RGB)
     //const rgb = convertToRGB(hex);
 
     //let color;
@@ -403,7 +403,7 @@
     let nIndex = 0;
     let xyz = convertRGBToXYZ(rgb);
 
-    // ƒJƒ‰[ƒpƒŒƒbƒg‚ÌF‚ÆŒ³‚ÌF‚ÌF·‚ªˆê”Ô¬‚³‚¢(—‚Ä‚¢‚é)F‚ğ‘I‚Ô
+    // ã‚«ãƒ©ãƒ¼ãƒ‘ãƒ¬ãƒƒãƒˆã®è‰²ã¨å…ƒã®è‰²ã®è‰²å·®ãŒä¸€ç•ªå°ã•ã„(ä¼¼ã¦ã„ã‚‹)è‰²ã‚’é¸ã¶
     for (var n = 0; n < palette.length; n++) {
       var pXYZ = convertRGBToXYZ(convertToRGB(palette[n]));
       var d = calcXYZDelta(pXYZ, xyz);
@@ -418,7 +418,7 @@
 
   //LMS
   function chooseColor003(palette, rgb) {
-    // Œ³‚ÌF(RGB)
+    // å…ƒã®è‰²(RGB)
     //const rgb = convertToRGB(hex);
 
     //let color;
@@ -426,7 +426,7 @@
     let nIndex = 0;
     let lms = convertRGBToLMS(rgb);
 
-    // ƒJƒ‰[ƒpƒŒƒbƒg‚ÌF‚ÆŒ³‚ÌF‚ÌF·‚ªˆê”Ô¬‚³‚¢(—‚Ä‚¢‚é)F‚ğ‘I‚Ô
+    // ã‚«ãƒ©ãƒ¼ãƒ‘ãƒ¬ãƒƒãƒˆã®è‰²ã¨å…ƒã®è‰²ã®è‰²å·®ãŒä¸€ç•ªå°ã•ã„(ä¼¼ã¦ã„ã‚‹)è‰²ã‚’é¸ã¶
     for (var n = 0; n < palette.length; n++) {
       var pLMS = convertRGBToLMS(convertToRGB(palette[n]));
       var d = calcLMSDelta(pLMS, lms);
