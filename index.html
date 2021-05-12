@@ -118,6 +118,9 @@
 
   // Canvas上に画像を表示する
   function canvasDraw() {
+  
+   document.getElementById("textarea1").value = "";
+   
     // canvas内の要素をクリアする
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     dstCtx.clearRect(0, 0, canvasWidth, canvasHeight);
