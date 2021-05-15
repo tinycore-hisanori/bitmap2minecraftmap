@@ -96,7 +96,7 @@
 
     if(fastBlockValue > 1){
       switch(fastBlockValue){
-        case 1:
+        case 2:
           buffCmd = 'player.execute("/fill '
            + baseX + ' '
            + baseY + ' ' 
@@ -106,7 +106,7 @@
            + (baseZ + 127) + ' '
            + 'coral_block")\n';
           break;
-        case 2:
+        case 3:
         buffCmd = 'player.execute("/fill '
            + baseX + ' '
            + baseY + ' ' 
@@ -123,9 +123,9 @@
     for (var y = 0; y < 128; ++y) {
       for (var x = 0; x < 128; ++x) {
         bMakeCmd = true;
-        if(fastBlockValue == 1 && tbl[x][y] == 0){//黒：石炭ブロック
+        if(fastBlockValue == 2 && tbl[x][y] == 0){//黒：石炭ブロック
           bMakeCmd = false;
-        } else if(fastBlockValue == 2 && tbl[x][y] == 5){//白：白ウール
+        } else if(fastBlockValue == 3 && tbl[x][y] == 5){//白：白ウール
           bMakeCmd = false;
         }
         if(bMakeCmd == true){
