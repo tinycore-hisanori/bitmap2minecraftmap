@@ -44,9 +44,10 @@
     <option value="2">背景「黒」にする（※石炭ブロック多いときに有効)</option>
     <option value="3">背景「白」にする（※白ウール多いときに有効)</option>
   </select>
-
+  
   <br />
-
+  <input type="checkbox" id="reportedCommandID" value="1" checked="checked">「イラスト終了」を通知する
+  <br />
 
     <input type="button" onclick="makeCommand();" value="コマンド生成" />
     <br />
@@ -144,6 +145,12 @@
         }
       }
     }
+
+    let element = document.getElementById('reportedCommandID');
+    if(element.checked){
+      buffCmd = buffCmd + 'player.execute("/title @a title Completed Draw")\n';
+    }
+
     //console.log(buffCmd);
     document.getElementById("textarea1").value = buffCmd;
   }
