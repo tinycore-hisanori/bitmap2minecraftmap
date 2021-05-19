@@ -40,9 +40,10 @@
     id="fastBlockID"
     onchange="selectFastBlock(this);"
   >
-    <option value="1" selected>すべてのブロックを生成</option>
+    <option value="1" selected>すべてのブロックを生成(高速化対策なし)</option>
     <option value="2">背景「黒」にする（※石炭ブロック多いときに有効)</option>
     <option value="3">背景「白」にする（※白ウール多いときに有効)</option>
+    <option value="4">一番多い色を背景にする（汎用高速化対策 その１）</option>
   </select>
   
   <br />
@@ -117,6 +118,35 @@
            + (baseZ + 127) + ' '
            + 'wool 0")\n';
           break;
+        case 4:
+          {
+            var mostValue = 0;
+            var mostCount = 0;
+            for(var i = 0; i < 38; i++){
+              var tmpCount = 0;
+              for (var y = 0; y < 128; ++y) {
+                for (var x = 0; x < 128; ++x) {
+                  if( tbl[x][y] == i){
+                    tmpCount = tmpCount + 1;
+                  }                  
+                }                
+              }
+              if(tmpCount >= mostCount){
+                mostCount = tmpCount;
+                mostValue = i;
+              }
+            }
+            buffCmd = 'player.execute("/fill '
+           + baseX + ' '
+           + baseY + ' ' 
+           + baseZ + ' ' 
+           + (baseX + 127) + ' '
+           + baseY + ' '
+           + (baseZ + 127) + ' '
+           + minecraftPalette[mostValue]
+           + '")\n';
+          }
+          break;
       }
     }
 
@@ -127,6 +157,9 @@
         if(fastBlockValue == 2 && tbl[x][y] == 0){//黒：石炭ブロック
           bMakeCmd = false;
         } else if(fastBlockValue == 3 && tbl[x][y] == 5){//白：白ウール
+          bMakeCmd = false;
+        }
+        else if(fastBlockValue == 4 && tbl[x][y] == mostValue){//最頻度ブロック
           bMakeCmd = false;
         }
         if(bMakeCmd == true){
